@@ -12,8 +12,8 @@ import { ChatbotWidget } from './components/ChatbotWidget';
 import { LandingPage } from './modules/LandingPage';
 import { ClientPortal } from './modules/ClientPortal';
 
-// Restored the Services import
-import { Services } from './modules/services'; 
+// FIXED: Capital 'S' used here to match the exact file name on your computer!
+import { Services } from './modules/Services'; 
 
 import { KnowledgeHub, KnowledgeHubArticle } from './modules/KnowledgeHub';
 import { AdminDashboard } from './modules/AdminDashboard';
