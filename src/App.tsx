@@ -12,11 +12,6 @@ import { ChatbotWidget } from './components/ChatbotWidget';
 import { LandingPage } from './modules/LandingPage';
 import { ClientPortal } from './modules/ClientPortal';
 
-// FIXED: Updated casing to lowercase 'services' to fix the Linux server resolution error.
-// If your file is exactly 'Services.tsx' in your repo, change this back to './modules/Services' 
-// and ensure the folder is exactly 'modules'.
-import { Services } from './modules/services'; 
-
 import { KnowledgeHub, KnowledgeHubArticle } from './modules/KnowledgeHub';
 import { AdminDashboard } from './modules/AdminDashboard';
 import { ContactUs } from './modules/ContactUs';
@@ -65,7 +60,6 @@ function Layout({ children }: { children: React.ReactNode }) {
     'landing': '/',
     'company': '/company',
     'portfolio': '/portfolio',
-    'services': '/services',
     'knowledge-hub': '/knowledge-hub',
     'contact': '/contact',
     'admin': '/admin',
@@ -93,7 +87,6 @@ function Layout({ children }: { children: React.ReactNode }) {
     '/portfolio/ux-showcase': 'portfolio',
     '/portfolio/ai-showcase': 'portfolio',
     '/portfolio/ora-grande-showcase': 'portfolio',
-    '/services': 'services',
     '/knowledge-hub': 'knowledge-hub',
     '/contact': 'contact',
     '/admin': 'admin',
@@ -134,7 +127,6 @@ function Layout({ children }: { children: React.ReactNode }) {
               <nav className="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-600" aria-label="Footer Navigation">
                 <Link to="/" className="hover:text-slate-900 transition-colors">Home</Link>
                 <Link to="/company" className="hover:text-slate-900 transition-colors">Company</Link>
-                <Link to="/services" className="hover:text-slate-900 transition-colors">Services</Link>
                 <Link to="/portfolio" className="hover:text-slate-900 transition-colors">Portfolio</Link>
                 <Link to="/knowledge-hub" className="hover:text-slate-900 transition-colors">Knowledge Hub</Link>
                 <Link to="/contact" className="hover:text-slate-900 transition-colors">Contact</Link>
@@ -181,7 +173,6 @@ function RouteWrapper({ Component, ...props }: any) {
     'landing': '/',
     'company': '/company',
     'portfolio': '/portfolio',
-    'services': '/services',
     'knowledge-hub': '/knowledge-hub',
     'contact': '/contact',
     'admin': '/admin',
@@ -365,21 +356,6 @@ export default function App() {
                     schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Portfolio', item: '/portfolio' }, { name: 'Ora Grande Showcase', item: '/portfolio/ora-grande-showcase' }])]}
                   />
                   <RouteWrapper Component={OraGrandeShowcase} />
-                </>
-              } 
-            />
-            
-            <Route 
-              path="/services" 
-              element={
-                <>
-                  <SEO 
-                    title="Digital Services & Solutions | GullG Technology"
-                    description="End-to-end digital services: Discovery & Consultation, Full-Stack Product Builds, SaaS Analytics Dashboards, AI Chatbot Integrations, and Custom Workflow Automations."
-                    canonicalPath="/services"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Services', item: '/services' }])]}
-                  />
-                  <RouteWrapper Component={Services} />
                 </>
               } 
             />
