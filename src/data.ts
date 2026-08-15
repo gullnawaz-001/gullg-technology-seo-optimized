@@ -1,4 +1,13 @@
-import { BlogPost, ClientProject, PortfolioProject, Service, Testimonial } from './types';
+import { BlogPost, ClientProject, PortfolioProject, Service, Testimonial, WelcomeVideoConfig } from './types';
+
+export const initialWelcomeVideoConfig: WelcomeVideoConfig = {
+  isPopupEnabled: true,
+  popupVideoSource: '/video/GullG-Technologies.mp4',
+  autoPlay: true,
+  muted: true,
+  showSkipButton: true,
+  closeOnEnd: true,
+};
 
 export const initialPaymentConfig = {
   paypal: {

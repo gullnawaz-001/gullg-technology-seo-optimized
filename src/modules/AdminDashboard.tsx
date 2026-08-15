@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LayoutDashboard, Users, MessageSquare, Settings, Bell, Search, Activity, ShieldAlert, ArrowRight, ArrowLeft, DollarSign, CreditCard, Calculator, Upload, FolderKanban, BookOpen } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Settings, Bell, Search, Activity, ShieldAlert, ArrowRight, ArrowLeft, DollarSign, CreditCard, Calculator, Upload, FolderKanban, BookOpen, Film } from 'lucide-react';
 import { EstimatorAdmin } from '../components/EstimatorAdmin';
 import { AdminUploads } from './AdminUploads';
 import { AdminProjects } from './AdminProjects';
 import { AdminKnowledgeHub } from './AdminKnowledgeHub';
+import { AdminWelcomeVideo } from '../components/AdminWelcomeVideo';
 import { ViewState } from '../types';
 import { defaultServicesOptions, initialPaymentConfig } from '../data';
 import { useGlobalStore } from '../store';
@@ -391,14 +392,35 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
         return <AdminProjects />;
       case 'uploads':
         return <AdminUploads />;
+      case 'welcome-video':
+        return (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <AdminWelcomeVideo />
+          </motion.div>
+        );
       case 'knowledge-hub':
         return <AdminKnowledgeHub />;
       case 'settings':
         return (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
              <h2 className="text-2xl font-bold text-slate-900 mb-6">Admin Settings</h2>
-             <p className="text-slate-600 mb-6">Manage platform configuration, team access, and billing.</p>
+             <p className="text-slate-600 mb-6">Manage platform configuration, welcome video popup, team access, and billing.</p>
              <div className="space-y-4">
+                <div 
+                  onClick={() => setActiveTab('welcome-video')}
+                  className="p-5 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-200/80 rounded-2xl cursor-pointer transition-all flex items-center justify-between group"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm">
+                      <Film size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-900 mb-0.5 group-hover:text-indigo-600 transition-colors">Welcome Video Popup</h4>
+                      <p className="text-sm text-slate-500">Configure the introductory full-screen video overlay for new visitors.</p>
+                    </div>
+                  </div>
+                  <ArrowRight size={18} className="text-indigo-600 group-hover:translate-x-1 transition-transform" />
+                </div>
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                   <h4 className="font-bold text-slate-900 mb-1">Platform Details</h4>
                   <p className="text-sm text-slate-500">Configure global site settings and metadata.</p>
@@ -515,6 +537,7 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
           <nav className="space-y-2">
             {[
               { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+              { id: 'welcome-video', label: 'Welcome Video', icon: Film },
               { id: 'projects', label: 'Projects', icon: FolderKanban },
               { id: 'knowledge-hub', label: 'Knowledge Hub', icon: BookOpen },
               { id: 'uploads', label: 'Client Uploads', icon: Upload },

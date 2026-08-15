@@ -1,14 +1,29 @@
-import { ProjectFile, ClientProject, BlogPost } from './types';
-import { initialFilesMock, notificationsMock, clientProjectsData, blogPostsData } from './data';
+import { ProjectFile, ClientProject, BlogPost, WelcomeVideoConfig } from './types';
+import { initialFilesMock, notificationsMock, clientProjectsData, blogPostsData, initialWelcomeVideoConfig } from './data';
 import { useState, useEffect } from 'react';
 
 type Listener = () => void;
+
+function getInitialWelcomeConfig(): WelcomeVideoConfig {
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('gullg_welcome_video_config');
+      if (saved) {
+        return { ...initialWelcomeVideoConfig, ...JSON.parse(saved) };
+      }
+    } catch (e) {
+      console.error('Failed to parse saved welcome video config', e);
+    }
+  }
+  return initialWelcomeVideoConfig;
+}
 
 class GlobalStore {
   files: ProjectFile[] = initialFilesMock;
   notifications: any[] = notificationsMock;
   projects: ClientProject[] = clientProjectsData;
   blogPosts: BlogPost[] = blogPostsData.map(p => ({...p, status: 'Published' as const, slug: p.slug || p.id}));
+  welcomeVideoConfig: WelcomeVideoConfig = getInitialWelcomeConfig();
   listeners: Set<Listener> = new Set();
 
   setFiles = (newFiles: ProjectFile[] | ((prev: ProjectFile[]) => ProjectFile[])) => {
@@ -47,6 +62,22 @@ class GlobalStore {
     this.notify();
   };
 
+  setWelcomeVideoConfig = (newConfig: WelcomeVideoConfig | ((prev: WelcomeVideoConfig) => WelcomeVideoConfig)) => {
+    if (typeof newConfig === 'function') {
+      this.welcomeVideoConfig = newConfig(this.welcomeVideoConfig);
+    } else {
+      this.welcomeVideoConfig = newConfig;
+    }
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('gullg_welcome_video_config', JSON.stringify(this.welcomeVideoConfig));
+      } catch (e) {
+        console.error('Failed to save welcome video config to localStorage', e);
+      }
+    }
+    this.notify();
+  };
+
   notify() {
     this.listeners.forEach(l => l());
   }
@@ -74,6 +105,9 @@ export function useGlobalStore() {
     projects: globalStore.projects,
     setProjects: globalStore.setProjects,
     blogPosts: globalStore.blogPosts,
-    setBlogPosts: globalStore.setBlogPosts
+    setBlogPosts: globalStore.setBlogPosts,
+    welcomeVideoConfig: globalStore.welcomeVideoConfig,
+    setWelcomeVideoConfig: globalStore.setWelcomeVideoConfig
   };
 }
+
