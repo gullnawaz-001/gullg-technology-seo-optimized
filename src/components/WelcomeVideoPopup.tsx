@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router';
+import { Sparkles } from 'lucide-react';
 import { useGlobalStore } from '../store';
 
 export function WelcomeVideoPopup() {
   const { welcomeVideoConfig } = useGlobalStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [isOpen, setIsOpen] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const [videoError, setVideoError] = useState(false);
 
@@ -19,17 +22,23 @@ export function WelcomeVideoPopup() {
       return;
     }
 
+    // Do not show visitor popup over the internal admin dashboard
+    if (location.pathname === '/admin') {
+      setIsOpen(false);
+      return;
+    }
+
     const dismissed = sessionStorage.getItem('gullg_welcome_video_seen');
     if (!dismissed) {
       setIsOpen(true);
-      setIsMuted(welcomeVideoConfig.muted ?? true);
     }
-  }, [welcomeVideoConfig?.isPopupEnabled, welcomeVideoConfig?.muted]);
+  }, [welcomeVideoConfig?.isPopupEnabled, location.pathname]);
 
   // Handle Autoplay attempt
   useEffect(() => {
     if (isOpen && videoRef.current) {
       videoRef.current.currentTime = 0;
+      videoRef.current.muted = welcomeVideoConfig?.muted ?? true;
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
         playPromise
@@ -38,16 +47,15 @@ export function WelcomeVideoPopup() {
           })
           .catch((err) => {
             console.warn('Autoplay prevented or video loading interrupted:', err);
-            // Fallback: try muted autoplay if unmuted was rejected
+            // Fallback: try muted autoplay if unmuted was rejected by browser policy
             if (videoRef.current) {
               videoRef.current.muted = true;
-              setIsMuted(true);
               videoRef.current.play().catch(() => {});
             }
           });
       }
     }
-  }, [isOpen, welcomeVideoConfig?.popupVideoSource]);
+  }, [isOpen, welcomeVideoConfig?.popupVideoSource, welcomeVideoConfig?.muted]);
 
   // Lock body scroll and prevent background clicks when popup is active
   useEffect(() => {
@@ -74,20 +82,16 @@ export function WelcomeVideoPopup() {
     if (videoRef.current) {
       videoRef.current.pause();
     }
+    // Always route to the Home Page ('/') upon skipping or finishing
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
   };
 
   const handleVideoEnded = () => {
     if (welcomeVideoConfig?.closeOnEnd !== false) {
       handleClose();
     }
-  };
-
-  const toggleSound = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent skipping when toggling sound
-    if (!videoRef.current) return;
-    const nextMuted = !isMuted;
-    videoRef.current.muted = nextMuted;
-    setIsMuted(nextMuted);
   };
 
   const handleTimeUpdate = () => {
@@ -98,7 +102,7 @@ export function WelcomeVideoPopup() {
     }
   };
 
-  if (!welcomeVideoConfig?.isPopupEnabled) {
+  if (!welcomeVideoConfig?.isPopupEnabled || location.pathname === '/admin') {
     return null;
   }
 
@@ -130,8 +134,8 @@ export function WelcomeVideoPopup() {
             onClick={handleClose}
             className="relative h-[86vh] max-h-[780px] aspect-[9/16] max-w-[94vw] bg-black rounded-3xl overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.95)] flex flex-col cursor-pointer border-0 ring-0 group"
           >
-            {/* Top Bar Floating Badge & Sound Toggle */}
-            <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 via-black/30 to-transparent pointer-events-auto">
+            {/* Top Bar Floating Branding Badge */}
+            <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 via-black/30 to-transparent pointer-events-none">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-black/60 backdrop-blur-md p-1 flex items-center justify-center shadow-md">
                   <img src="/logo.png" alt="GullG Logo" className="w-full h-full object-contain" />
@@ -141,34 +145,15 @@ export function WelcomeVideoPopup() {
                   GullG
                 </span>
               </div>
-
-              {/* Sound Toggle (Clicking toggles audio without closing) */}
-              <button
-                onClick={toggleSound}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white/90 hover:text-white backdrop-blur-md text-xs font-medium transition-all shadow-lg cursor-pointer"
-                title={isMuted ? 'Click to Unmute' : 'Mute'}
-              >
-                {isMuted ? (
-                  <>
-                    <VolumeX size={14} className="text-amber-400" />
-                    <span className="text-[11px] text-amber-300">Unmute</span>
-                  </>
-                ) : (
-                  <>
-                    <Volume2 size={14} className="text-white" />
-                    <span className="text-[11px]">Sound On</span>
-                  </>
-                )}
-              </button>
             </div>
 
-            {/* Video Player (9:16 borderless) */}
+            {/* Video Player (9:16 borderless, audio controlled by admin config) */}
             <div className="relative w-full h-full flex items-center justify-center bg-black overflow-hidden">
               <video
                 ref={videoRef}
                 src={welcomeVideoConfig.popupVideoSource || '/video/GullG-Technologies.mp4'}
                 autoPlay={welcomeVideoConfig.autoPlay ?? true}
-                muted={isMuted}
+                muted={welcomeVideoConfig.muted ?? true}
                 playsInline
                 preload="auto"
                 onTimeUpdate={handleTimeUpdate}
@@ -193,7 +178,7 @@ export function WelcomeVideoPopup() {
               {/* Subtle Skip on Click Prompt */}
               <div className="text-center">
                 <span className="inline-block px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-[11px] text-white/75 font-medium tracking-wide">
-                  Tap anywhere to skip
+                  Tap anywhere to continue to home page
                 </span>
               </div>
 

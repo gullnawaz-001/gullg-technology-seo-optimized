@@ -3,8 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { Search, Clock, ChevronRight, ArrowLeft } from 'lucide-react';
 import Markdown from 'react-markdown';
 
-// FIXED: Changed to lowercase 'store' to perfectly match your newly created store.ts file
-import { useGlobalStore } from '../store'; 
+import { useGlobalStore } from '../store';
 import { BlogPost } from '../types';
 import { SEO } from '../components/SEO';
 import { getArticleSchema, getBreadcrumbSchema } from '../lib/seoSchemas';
