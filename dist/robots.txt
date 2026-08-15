@@ -1,0 +1,11 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /client-portal
+
+# Host
+Host: https://gullgtech.online
+
+# Sitemap
+Sitemap: https://gullgtech.online/sitemap.xml
