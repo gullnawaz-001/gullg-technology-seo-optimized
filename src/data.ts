@@ -4,8 +4,8 @@ export const initialWelcomeVideoConfig: WelcomeVideoConfig = {
   isPopupEnabled: true,
   popupVideoSource: '/video/GullG-Technologies.mp4',
   autoPlay: true,
-  muted: true,
-  showSkipButton: true,
+  muted: false, // Video sound is ON by default
+  showSkipButton: false,
   closeOnEnd: true,
 };
 

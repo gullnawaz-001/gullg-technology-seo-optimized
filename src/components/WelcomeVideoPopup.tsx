@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Volume2, VolumeX } from 'lucide-react';
 import { useGlobalStore } from '../store';
 
 export function WelcomeVideoPopup() {
@@ -10,6 +10,7 @@ export function WelcomeVideoPopup() {
   const location = useLocation();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(welcomeVideoConfig?.muted === true ? true : false);
   const [progress, setProgress] = useState(0);
   const [videoError, setVideoError] = useState(false);
 
@@ -31,26 +32,54 @@ export function WelcomeVideoPopup() {
     const dismissed = sessionStorage.getItem('gullg_welcome_video_seen');
     if (!dismissed) {
       setIsOpen(true);
+      setIsMuted(welcomeVideoConfig?.muted === true ? true : false);
     }
-  }, [welcomeVideoConfig?.isPopupEnabled, location.pathname]);
+  }, [welcomeVideoConfig?.isPopupEnabled, location.pathname, welcomeVideoConfig?.muted]);
 
-  // Handle Autoplay attempt
+  // Handle Autoplay attempt with Sound ON by default
   useEffect(() => {
     if (isOpen && videoRef.current) {
       videoRef.current.currentTime = 0;
-      videoRef.current.muted = welcomeVideoConfig?.muted ?? true;
+      const initialMute = welcomeVideoConfig?.muted === true ? true : false;
+      setIsMuted(initialMute);
+      videoRef.current.defaultMuted = initialMute;
+      videoRef.current.muted = initialMute;
+      videoRef.current.volume = 1.0;
+      
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
             setVideoError(false);
+            if (!initialMute && videoRef.current) {
+              videoRef.current.muted = false;
+            }
           })
           .catch((err) => {
-            console.warn('Autoplay prevented or video loading interrupted:', err);
-            // Fallback: try muted autoplay if unmuted was rejected by browser policy
+            console.warn('Autoplay with sound attempted:', err);
             if (videoRef.current) {
+              // If browser blocked unmuted autoplay, play video and unlock sound immediately on first user gesture
               videoRef.current.muted = true;
-              videoRef.current.play().catch(() => {});
+              setIsMuted(true);
+              videoRef.current.play().then(() => {
+                if (!initialMute) {
+                  const unlockAudio = () => {
+                    if (videoRef.current && welcomeVideoConfig?.muted !== true) {
+                      videoRef.current.muted = false;
+                      videoRef.current.volume = 1.0;
+                      setIsMuted(false);
+                    }
+                    window.removeEventListener('pointerdown', unlockAudio);
+                    window.removeEventListener('click', unlockAudio);
+                    window.removeEventListener('keydown', unlockAudio);
+                    window.removeEventListener('touchstart', unlockAudio);
+                  };
+                  window.addEventListener('pointerdown', unlockAudio, { once: true });
+                  window.addEventListener('click', unlockAudio, { once: true });
+                  window.addEventListener('keydown', unlockAudio, { once: true });
+                  window.addEventListener('touchstart', unlockAudio, { once: true });
+                }
+              }).catch(() => {});
             }
           });
       }
@@ -94,6 +123,14 @@ export function WelcomeVideoPopup() {
     }
   };
 
+  const toggleSound = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevents closing the popup when user clicks the mute/unmute button
+    if (!videoRef.current) return;
+    const nextMuted = !isMuted;
+    videoRef.current.muted = nextMuted;
+    setIsMuted(nextMuted);
+  };
+
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       const cur = videoRef.current.currentTime;
@@ -134,8 +171,8 @@ export function WelcomeVideoPopup() {
             onClick={handleClose}
             className="relative h-[86vh] max-h-[780px] aspect-[9/16] max-w-[94vw] bg-black rounded-3xl overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.95)] flex flex-col cursor-pointer border-0 ring-0 group"
           >
-            {/* Top Bar Floating Branding Badge */}
-            <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 via-black/30 to-transparent pointer-events-none">
+            {/* Top Bar Floating Branding Badge & Interactive Mute/Unmute Button */}
+            <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 via-black/30 to-transparent pointer-events-auto">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-black/60 backdrop-blur-md p-1 flex items-center justify-center shadow-md">
                   <img src="/logo.png" alt="GullG Logo" className="w-full h-full object-contain" />
@@ -145,15 +182,35 @@ export function WelcomeVideoPopup() {
                   GullG
                 </span>
               </div>
+
+              {/* Sound Mute / Unmute Button */}
+              <button
+                type="button"
+                onClick={toggleSound}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md text-xs font-medium transition-all shadow-lg cursor-pointer border border-white/15 hover:border-white/30 active:scale-95 group/btn"
+                title={isMuted ? 'Click to Unmute Sound' : 'Click to Mute Sound'}
+              >
+                {isMuted ? (
+                  <>
+                    <VolumeX size={14} className="text-amber-400" />
+                    <span className="text-[11px] text-amber-300 font-medium">Muted</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 size={14} className="text-emerald-400 animate-pulse" />
+                    <span className="text-[11px] text-emerald-300 font-medium">Sound ON</span>
+                  </>
+                )}
+              </button>
             </div>
 
-            {/* Video Player (9:16 borderless, audio controlled by admin config) */}
+            {/* Video Player (9:16 borderless) */}
             <div className="relative w-full h-full flex items-center justify-center bg-black overflow-hidden">
               <video
                 ref={videoRef}
                 src={welcomeVideoConfig.popupVideoSource || '/video/GullG-Technologies.mp4'}
                 autoPlay={welcomeVideoConfig.autoPlay ?? true}
-                muted={welcomeVideoConfig.muted ?? true}
+                muted={isMuted}
                 playsInline
                 preload="auto"
                 onTimeUpdate={handleTimeUpdate}

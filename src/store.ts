@@ -7,9 +7,14 @@ type Listener = () => void;
 function getInitialWelcomeConfig(): WelcomeVideoConfig {
   if (typeof window !== 'undefined') {
     try {
-      const saved = localStorage.getItem('gullg_welcome_video_config');
+      const saved = localStorage.getItem('gullg_welcome_video_config_v2') || localStorage.getItem('gullg_welcome_video_config');
       if (saved) {
-        return { ...initialWelcomeVideoConfig, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        return { 
+          ...initialWelcomeVideoConfig, 
+          ...parsed,
+          muted: parsed.muted === true ? true : false // Defaults to false (Sound ON)
+        };
       }
     } catch (e) {
       console.error('Failed to parse saved welcome video config', e);
@@ -70,7 +75,7 @@ class GlobalStore {
     }
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('gullg_welcome_video_config', JSON.stringify(this.welcomeVideoConfig));
+        localStorage.setItem('gullg_welcome_video_config_v2', JSON.stringify(this.welcomeVideoConfig));
       } catch (e) {
         console.error('Failed to save welcome video config to localStorage', e);
       }

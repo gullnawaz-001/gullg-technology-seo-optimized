@@ -319,11 +319,11 @@ export function AdminWelcomeVideo() {
                 </label>
               </div>
 
-              {/* Muted toggle (Admin only control) */}
+              {/* Audio Mute toggle (Admin only control) */}
               <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-slate-900 text-sm">Mute Video Audio</div>
-                  <div className="text-xs text-slate-500">Only admin controls audio output globally</div>
+                  <div className="font-bold text-slate-900 text-sm">Mute Video Sound</div>
+                  <div className="text-xs text-slate-500">Sound is ON by default. Enable to force mute.</div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
