@@ -3,7 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { Search, Clock, ChevronRight, ArrowLeft } from 'lucide-react';
 import Markdown from 'react-markdown';
 
-import { useGlobalStore } from '../store';
+// FIXED: Updated casing to capital 'Store' to resolve the Linux build error.
+import { useGlobalStore } from '../Store'; 
 import { BlogPost } from '../types';
 import { SEO } from '../components/SEO';
 import { getArticleSchema, getBreadcrumbSchema } from '../lib/seoSchemas';
