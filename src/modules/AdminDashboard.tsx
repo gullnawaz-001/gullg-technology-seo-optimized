@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LayoutDashboard, Users, MessageSquare, Settings, Bell, Search, Activity, ShieldAlert, ArrowRight, ArrowLeft, DollarSign, CreditCard, Calculator, Upload, FolderKanban, BookOpen, Film } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Settings, Bell, Search, Activity, ShieldAlert, ArrowRight, ArrowLeft, DollarSign, CreditCard, Calculator, Upload, FolderKanban, BookOpen, Film, Menu, X, LogOut } from 'lucide-react';
 import { EstimatorAdmin } from '../components/EstimatorAdmin';
 import { AdminUploads } from './AdminUploads';
 import { AdminProjects } from './AdminProjects';
@@ -21,12 +21,28 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
   const [loginError, setLoginError] = useState('');
   
   const [activeTab, setActiveTab] = useState('overview');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [servicesOptions, setServicesOptions] = useState(defaultServicesOptions);
   const [paymentConfig, setPaymentConfig] = useState(initialPaymentConfig);
   const [showNotifications, setShowNotifications] = useState(false);
   const { notifications, setNotifications } = useGlobalStore();
   
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  const navItems = [
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'welcome-video', label: 'Welcome Video', icon: Film },
+    { id: 'projects', label: 'Projects', icon: FolderKanban },
+    { id: 'knowledge-hub', label: 'Knowledge Hub', icon: BookOpen },
+    { id: 'uploads', label: 'Client Uploads', icon: Upload },
+    { id: 'leads', label: 'Lead Management', icon: Users },
+    { id: 'estimator', label: 'Client Offers', icon: Calculator },
+    { id: 'pricing', label: 'Pricing', icon: DollarSign },
+    { id: 'payments', label: 'Payments', icon: CreditCard },
+    { id: 'chatbot', label: 'Chatbot Logs', icon: MessageSquare },
+    { id: 'system', label: 'System Health', icon: Activity },
+    { id: 'settings', label: 'Settings', icon: Settings },
+  ];
 
 
   useEffect(() => {
@@ -512,13 +528,13 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
   }
 
   return (
-    <div className="pt-0 min-h-screen bg-slate-50 flex">
-      {/* Sidebar */}
-      <div className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 fixed bottom-0 top-0 left-0">
+    <div className="pt-0 min-h-screen bg-slate-50 flex flex-col md:flex-row">
+      {/* Desktop Fixed Sidebar */}
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 fixed bottom-0 top-0 left-0 z-30">
         <div className="p-6 border-b border-slate-200">
           <button 
             onClick={() => onNavigate('landing')}
-            className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 :text-white transition-colors"
+            className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Website
@@ -534,41 +550,184 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
               <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Engine Control</span>
             </div>
           </div>
-          <nav className="space-y-2">
-            {[
-              { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-              { id: 'welcome-video', label: 'Welcome Video', icon: Film },
-              { id: 'projects', label: 'Projects', icon: FolderKanban },
-              { id: 'knowledge-hub', label: 'Knowledge Hub', icon: BookOpen },
-              { id: 'uploads', label: 'Client Uploads', icon: Upload },
-              { id: 'leads', label: 'Lead Management', icon: Users },
-              { id: 'estimator', label: 'Client Offers', icon: Calculator },
-              { id: 'pricing', label: 'Pricing', icon: DollarSign },
-              { id: 'payments', label: 'Payments', icon: CreditCard },
-              { id: 'chatbot', label: 'Chatbot Logs', icon: MessageSquare },
-              { id: 'system', label: 'System Health', icon: Activity },
-              { id: 'settings', label: 'Settings', icon: Settings },
-            ].map(item => (
-              <button 
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                  activeTab === item.id 
-                    ? 'bg-slate-100 text-slate-900'  
-                    : 'text-slate-600 hover:bg-slate-50 '
-                }`}
-              >
-                <item.icon size={18} />
-                {item.label}
-              </button>
-            ))}
+          <nav className="space-y-1.5">
+            {navItems.map(item => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button 
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                    isActive 
+                      ? 'bg-slate-900 text-white shadow-sm'  
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon size={18} />
+                  {item.label}
+                </button>
+              );
+            })}
           </nav>
         </div>
+      </aside>
+
+      {/* Mobile Sticky Top Header */}
+      <header className="md:hidden sticky top-0 z-40 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-xs">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors"
+            aria-label="Toggle Navigation Menu"
+          >
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-slate-900 overflow-hidden flex items-center justify-center shadow-xs">
+              <img src="/logo.png" alt="GullG Logo" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <span className="font-bold text-slate-900 text-sm block leading-tight">GullG Admin</span>
+              <span className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">
+                {navItems.find(n => n.id === activeTab)?.label || activeTab}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 relative transition-colors"
+            aria-label="Notifications"
+          >
+            <Bell size={16} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+            )}
+          </button>
+
+          <button
+            onClick={() => onNavigate('landing')}
+            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors"
+            title="Back to Website"
+          >
+            <ArrowLeft size={16} />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Fast-Access Horizontal Scroll Tab Bar */}
+      <div className="md:hidden flex items-center gap-2 overflow-x-auto py-2.5 px-4 bg-white border-b border-slate-200 no-scrollbar sticky top-[61px] z-30 shadow-xs">
+        {navItems.map(item => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
+                isActive 
+                  ? 'bg-slate-900 text-white shadow-xs' 
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              <Icon size={13} />
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 md:ml-64 p-4 md:p-8 pt-8">
-        <div className="flex items-center justify-between mb-8">
+      {/* Mobile Slide-Over Navigation Drawer */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <div className="md:hidden fixed inset-0 z-50 flex">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs"
+            />
+
+            {/* Drawer Container */}
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 280 }}
+              className="relative w-4/5 max-w-xs bg-white h-full shadow-2xl flex flex-col z-10"
+            >
+              {/* Drawer Header */}
+              <div className="p-5 border-b border-slate-200 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-slate-900 overflow-hidden flex items-center justify-center shadow-sm">
+                    <img src="/logo.png" alt="GullG Logo" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-slate-900 block leading-tight">GullG Admin</span>
+                    <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Engine Control</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Drawer Navigation Links */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-1.5">
+                {navItems.map(item => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveTab(item.id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                        isActive
+                          ? 'bg-slate-900 text-white shadow-sm'
+                          : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Icon size={18} />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Drawer Footer */}
+              <div className="p-4 border-t border-slate-200 space-y-2">
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onNavigate('landing');
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors"
+                >
+                  <ArrowLeft size={16} />
+                  Back to Website
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content Area */}
+      <main className="flex-1 md:ml-64 p-3.5 sm:p-6 md:p-8 pt-4 md:pt-8 w-full max-w-full overflow-x-hidden">
+        {/* Desktop Header Topbar */}
+        <div className="hidden md:flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Admin Engine</h1>
             <p className="text-sm text-slate-500">Manage incoming leads, content, and system health.</p>
@@ -583,85 +742,86 @@ export function AdminDashboard({ onNavigate }: AdminDashboardProps) {
               />
             </div>
             <div className="relative">
-            <button 
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 relative shadow-sm hover:bg-slate-50"
-            >
-              <Bell size={18} />
-              {unreadCount > 0 && (
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
-              )}
-            </button>
-            
-            <AnimatePresence>
-              {showNotifications && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50"
-                >
-                  <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <h3 className="font-bold text-slate-900">Notifications</h3>
-                    <button 
-                      onClick={() => setNotifications(notifications.map(n => ({ ...n, read: true })))}
-                      className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
-                    >
-                      Mark all as read
-                    </button>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <div className="p-8 text-center text-slate-500 text-sm">No notifications yet.</div>
-                    ) : (
-                      <div className="divide-y divide-slate-50">
-                        {notifications.map(notif => (
-                          <div 
-                            key={notif.id} 
-                            onClick={() => {
-                              setActiveTab('uploads');
-                              setShowNotifications(false);
-                              setNotifications(notifications.map(n => n.id === notif.id ? { ...n, read: true } : n));
-                            }} className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer ${!notif.read ? 'bg-indigo-50/30' : ''}`}>
-                            <div className="flex gap-3">
-                              <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!notif.read ? 'bg-indigo-500' : 'bg-slate-300'}`} />
-                              <div>
-                                <p className="text-sm text-slate-900 font-medium">{notif.message}</p>
-                                {notif.client && (
-                                  <p className="text-xs text-slate-500 mt-1">
-                                    {notif.client} • {notif.project}
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 relative shadow-sm hover:bg-slate-50"
+              >
+                <Bell size={18} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                )}
+              </button>
+              
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50"
+                  >
+                    <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                      <h3 className="font-bold text-slate-900">Notifications</h3>
+                      <button 
+                        onClick={() => setNotifications(notifications.map(n => ({ ...n, read: true })))}
+                        className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                      >
+                        Mark all as read
+                      </button>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="p-8 text-center text-slate-500 text-sm">No notifications yet.</div>
+                      ) : (
+                        <div className="divide-y divide-slate-50">
+                          {notifications.map(notif => (
+                            <div 
+                              key={notif.id} 
+                              onClick={() => {
+                                setActiveTab('uploads');
+                                setShowNotifications(false);
+                                setNotifications(notifications.map(n => n.id === notif.id ? { ...n, read: true } : n));
+                              }} className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer ${!notif.read ? 'bg-indigo-50/30' : ''}`}>
+                              <div className="flex gap-3">
+                                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!notif.read ? 'bg-indigo-500' : 'bg-slate-300'}`} />
+                                <div>
+                                  <p className="text-sm text-slate-900 font-medium">{notif.message}</p>
+                                  {notif.client && (
+                                    <p className="text-xs text-slate-500 mt-1">
+                                      {notif.client} • {notif.project}
+                                    </p>
+                                  )}
+                                  <p className="text-xs text-slate-400 mt-1">
+                                    {new Date(notif.timestamp).toLocaleString()}
                                   </p>
-                                )}
-                                <p className="text-xs text-slate-400 mt-1">
-                                  {new Date(notif.timestamp).toLocaleString()}
-                                </p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
+        {/* Dynamic Tab Content with Smooth Transitions */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
+            className="w-full"
           >
             {renderContent()}
           </motion.div>
         </AnimatePresence>
-
-      </div>
+      </main>
     </div>
   );
 }
