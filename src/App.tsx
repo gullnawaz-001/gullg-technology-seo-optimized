@@ -11,7 +11,12 @@ import { Header } from './components/Header';
 import { ChatbotWidget } from './components/ChatbotWidget';
 import { LandingPage } from './modules/LandingPage';
 import { ClientPortal } from './modules/ClientPortal';
-import { Services } from './modules/Services';
+
+// FIXED: Updated casing to lowercase 'services' to fix the Linux server resolution error.
+// If your file is exactly 'Services.tsx' in your repo, change this back to './modules/Services' 
+// and ensure the folder is exactly 'modules'.
+import { Services } from './modules/services'; 
+
 import { KnowledgeHub, KnowledgeHubArticle } from './modules/KnowledgeHub';
 import { AdminDashboard } from './modules/AdminDashboard';
 import { ContactUs } from './modules/ContactUs';
