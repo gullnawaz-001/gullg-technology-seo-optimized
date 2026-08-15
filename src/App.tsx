@@ -16,13 +16,6 @@ import { KnowledgeHub, KnowledgeHubArticle } from './modules/KnowledgeHub';
 import { AdminDashboard } from './modules/AdminDashboard';
 import { ContactUs } from './modules/ContactUs';
 import { FeaturedWorksShowcase } from './modules/FeaturedWorksShowcase';
-import { SaaSShowcaseLanding } from './modules/SaaSShowcaseLanding';
-import { MedQBankShowcase } from './modules/MedQBankShowcase';
-import { CheelaCafeShowcase } from "./modules/CheelaCafeShowcase";
-import SocialMediaShowcase from "./modules/SocialMediaShowcase";
-import ExamPortalShowcase from "./modules/ExamPortalShowcase";
-import AIChatbotShowcase from "./modules/AIChatbotShowcase";
-import { OraGrandeShowcase } from "./modules/OraGrandeShowcase";
 import { CompanyPage } from "./modules/CompanyPage";
 import { PrivacyPolicy } from "./modules/PrivacyPolicy";
 import { TermsOfService } from "./modules/TermsOfService";
@@ -45,14 +38,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   
   const hideHeaderFooter = [
-    '/admin', 
-    '/portfolio/saas-showcase', 
-    '/portfolio/medqbank-showcase', 
-    '/portfolio/cheela-showcase', 
-    '/portfolio/social-media-showcase', 
-    '/portfolio/ux-showcase', 
-    '/portfolio/ai-showcase', 
-    '/portfolio/ora-grande-showcase'
+    '/admin'
   ].includes(location.pathname);
   
   // Backward compatibility map for Header navigation
@@ -80,13 +66,6 @@ function Layout({ children }: { children: React.ReactNode }) {
     '/': 'landing',
     '/company': 'company',
     '/portfolio': 'portfolio',
-    '/portfolio/saas-showcase': 'portfolio',
-    '/portfolio/medqbank-showcase': 'portfolio',
-    '/portfolio/cheela-showcase': 'portfolio',
-    '/portfolio/social-media-showcase': 'portfolio',
-    '/portfolio/ux-showcase': 'portfolio',
-    '/portfolio/ai-showcase': 'portfolio',
-    '/portfolio/ora-grande-showcase': 'portfolio',
     '/knowledge-hub': 'knowledge-hub',
     '/contact': 'contact',
     '/admin': 'admin',
@@ -178,14 +157,7 @@ function RouteWrapper({ Component, ...props }: any) {
     'admin': '/admin',
     'client-portal': '/client-portal',
     'privacy': '/privacy-policy',
-    'terms': '/terms-of-service',
-    'saas-showcase': '/portfolio/saas-showcase',
-    'medqbank-showcase': '/portfolio/medqbank-showcase',
-    'cheela-showcase': '/portfolio/cheela-showcase',
-    'social-media-showcase': '/portfolio/social-media-showcase',
-    'ux-showcase': '/portfolio/ux-showcase',
-    'ai-showcase': '/portfolio/ai-showcase',
-    'ora-grande-showcase': '/portfolio/ora-grande-showcase'
+    'terms': '/terms-of-service'
   };
 
   const handleNavigate = (view: string) => {
@@ -250,112 +222,6 @@ export default function App() {
                     schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Portfolio', item: '/portfolio' }])]}
                   />
                   <RouteWrapper Component={FeaturedWorksShowcase} />
-                </>
-              } 
-            />
-            
-            {/* Portfolio detail routes */}
-            <Route 
-              path="/portfolio/saas-showcase" 
-              element={
-                <>
-                  <SEO 
-                    title="SaaS Financial Analytics Dashboard Case Study | GullG Technology"
-                    description="Interactive case study and live demo of an enterprise dual-view SaaS financial intelligence and MRR/ARR analytics dashboard."
-                    canonicalPath="/portfolio/saas-showcase"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Portfolio', item: '/portfolio' }, { name: 'SaaS Analytics Showcase', item: '/portfolio/saas-showcase' }])]}
-                  />
-                  <RouteWrapper Component={SaaSShowcaseLanding} />
-                </>
-              } 
-            />
-            
-            <Route 
-              path="/portfolio/medqbank-showcase" 
-              element={
-                <>
-                  <SEO 
-                    title="MedQBank Medical Student Analytics Case Study | GullG Technology"
-                    description="Case study on We MedQBank, a high-yield medical testing engine and student performance analytics platform for USMLE and board preparation."
-                    canonicalPath="/portfolio/medqbank-showcase"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Portfolio', item: '/portfolio' }, { name: 'MedQBank Showcase', item: '/portfolio/medqbank-showcase' }])]}
-                  />
-                  <RouteWrapper Component={MedQBankShowcase} />
-                </>
-              } 
-            />
-            
-            <Route 
-              path="/portfolio/cheela-showcase" 
-              element={
-                <>
-                  <SEO 
-                    title="Cheela Cafe Digital Ordering Platform Case Study | GullG Technology"
-                    description="Case study for Cheela Cafe's mobile-first web ordering application, digital menu, real-time cart state, and kitchen operations dashboard."
-                    canonicalPath="/portfolio/cheela-showcase"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Portfolio', item: '/portfolio' }, { name: 'Cheela Cafe Showcase', item: '/portfolio/cheela-showcase' }])]}
-                  />
-                  <RouteWrapper Component={CheelaCafeShowcase} />
-                </>
-              } 
-            />
-            
-            <Route 
-              path="/portfolio/social-media-showcase" 
-              element={
-                <>
-                  <SEO 
-                    title="Social Growth Hub & Campaign Case Study | GullG Technology"
-                    description="Explore our strategic social media campaign management, content calendar scheduling, and cross-channel growth analytics case study."
-                    canonicalPath="/portfolio/social-media-showcase"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Portfolio', item: '/portfolio' }, { name: 'Social Media Showcase', item: '/portfolio/social-media-showcase' }])]}
-                  />
-                  <RouteWrapper Component={SocialMediaShowcase} />
-                </>
-              } 
-            />
-            
-            <Route 
-              path="/portfolio/ux-showcase" 
-              element={
-                <>
-                  <SEO 
-                    title="Exam Portal UI/UX Research & Prototype Case Study | GullG Technology"
-                    description="UI/UX research and interactive prototype design for a distraction-free, WCAG AAA compliant academic assessment and exam portal."
-                    canonicalPath="/portfolio/ux-showcase"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Portfolio', item: '/portfolio' }, { name: 'Exam Portal UX Showcase', item: '/portfolio/ux-showcase' }])]}
-                  />
-                  <RouteWrapper Component={ExamPortalShowcase} />
-                </>
-              } 
-            />
-            
-            <Route 
-              path="/portfolio/ai-showcase" 
-              element={
-                <>
-                  <SEO 
-                    title="AI Customer Support Chatbot Case Study | GullG Technology"
-                    description="Case study and interactive voice-enabled demo for an intelligent E-Commerce AI customer support assistant powered by modern LLMs."
-                    canonicalPath="/portfolio/ai-showcase"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Portfolio', item: '/portfolio' }, { name: 'AI Chatbot Showcase', item: '/portfolio/ai-showcase' }])]}
-                  />
-                  <RouteWrapper Component={AIChatbotShowcase} />
-                </>
-              } 
-            />
-            
-            <Route 
-              path="/portfolio/ora-grande-showcase" 
-              element={
-                <>
-                  <SEO 
-                    title="Ora Grande Luxury Suite Management Case Study | GullG Technology"
-                    description="Case study for the Ora Grande luxury event management, guest CRM, and bespoke digital invitation suite."
-                    canonicalPath="/portfolio/ora-grande-showcase"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Portfolio', item: '/portfolio' }, { name: 'Ora Grande Showcase', item: '/portfolio/ora-grande-showcase' }])]}
-                  />
-                  <RouteWrapper Component={OraGrandeShowcase} />
                 </>
               } 
             />
