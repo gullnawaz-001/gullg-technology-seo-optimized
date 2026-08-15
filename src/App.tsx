@@ -17,8 +17,6 @@ import { AdminDashboard } from './modules/AdminDashboard';
 import { ContactUs } from './modules/ContactUs';
 import { FeaturedWorksShowcase } from './modules/FeaturedWorksShowcase';
 import { CompanyPage } from "./modules/CompanyPage";
-import { PrivacyPolicy } from "./modules/PrivacyPolicy";
-import { TermsOfService } from "./modules/TermsOfService";
 import { ViewState } from './types';
 import { SEO } from './components/SEO';
 import { getOrganizationSchema, getWebSiteSchema, getBreadcrumbSchema } from './lib/seoSchemas';
@@ -49,9 +47,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     'knowledge-hub': '/knowledge-hub',
     'contact': '/contact',
     'admin': '/admin',
-    'client-portal': '/client-portal',
-    'privacy': '/privacy-policy',
-    'terms': '/terms-of-service'
+    'client-portal': '/client-portal'
   };
 
   const handleNavigate = (view: ViewState) => {
@@ -69,9 +65,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     '/knowledge-hub': 'knowledge-hub',
     '/contact': 'contact',
     '/admin': 'admin',
-    '/client-portal': 'client-portal',
-    '/privacy-policy': 'privacy',
-    '/terms-of-service': 'terms'
+    '/client-portal': 'client-portal'
   };
   
   let currentView = routeToView[location.pathname] || 'landing';
@@ -116,10 +110,6 @@ function Layout({ children }: { children: React.ReactNode }) {
               <div>
                 &copy; 2026 GullG Technology. All rights reserved.
               </div>
-              <div className="flex gap-6">
-                <Link to="/privacy-policy" className="hover:text-slate-900 transition-colors">Privacy Policy</Link>
-                <Link to="/terms-of-service" className="hover:text-slate-900 transition-colors">Terms of Service</Link>
-              </div>
             </div>
           </div>
         </footer>
@@ -155,9 +145,7 @@ function RouteWrapper({ Component, ...props }: any) {
     'knowledge-hub': '/knowledge-hub',
     'contact': '/contact',
     'admin': '/admin',
-    'client-portal': '/client-portal',
-    'privacy': '/privacy-policy',
-    'terms': '/terms-of-service'
+    'client-portal': '/client-portal'
   };
 
   const handleNavigate = (view: string) => {
@@ -284,36 +272,6 @@ export default function App() {
                     noIndex={true}
                   />
                   <RouteWrapper Component={AdminDashboard} />
-                </>
-              } 
-            />
-            
-            <Route 
-              path="/privacy-policy" 
-              element={
-                <>
-                  <SEO 
-                    title="Privacy Policy | GullG Technology"
-                    description="Read the GullG Technology Privacy Policy regarding user data protection, privacy practices, and personal information handling."
-                    canonicalPath="/privacy-policy"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Privacy Policy', item: '/privacy-policy' }])]}
-                  />
-                  <PrivacyPolicy />
-                </>
-              } 
-            />
-            
-            <Route 
-              path="/terms-of-service" 
-              element={
-                <>
-                  <SEO 
-                    title="Terms of Service | GullG Technology"
-                    description="Review the terms and conditions governing the use of GullG Technology's website, digital services, and client engagements."
-                    canonicalPath="/terms-of-service"
-                    schemas={[getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Terms of Service', item: '/terms-of-service' }])]}
-                  />
-                  <TermsOfService />
                 </>
               } 
             />
