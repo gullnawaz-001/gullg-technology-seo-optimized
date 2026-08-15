@@ -1,0 +1,151 @@
+import React, { useState } from 'react';
+
+// Default base prices for the 9 Core Expertise areas
+const DEFAULT_EXPERTISE_SERVICES = [
+  { id: 'dashboard-design', title: 'Data-Driven Dashboard Design', baseRate: 800, category: 'Design', timeline: '4-8 Weeks' },
+  { id: 'web-mobile-dev', title: 'Modern Web & Mobile App Development', baseRate: 1500, category: 'Development', timeline: '8-16 Weeks' },
+  { id: 'brand-identity', title: 'Graphic & Brand Identity Design', baseRate: 400, category: 'Design', timeline: '2-4 Weeks' },
+  { id: 'uiux-prototyping', title: 'UI/UX Prototyping & User Research', baseRate: 600, category: 'Design', timeline: '3-6 Weeks' },
+  { id: 'workflow-automation', title: 'Intelligent Process & Workflow Automation', baseRate: 500, category: 'Automation', timeline: '2-6 Weeks' },
+  { id: 'ai-chatbot', title: 'Live AI Chatbot Integration', baseRate: 700, category: 'Automation & AI', timeline: '3-5 Weeks' },
+  { id: 'social-media', title: 'Social Media Management & Strategy', baseRate: 350, category: 'Marketing', timeline: 'Monthly' },
+  { id: 'video-production', title: 'Video Creation & Motion Production', baseRate: 450, category: 'Marketing', timeline: '1-3 Weeks' },
+  { id: 'ad-campaigns', title: 'Ad Campaign Design & Management', baseRate: 550, category: 'Marketing', timeline: '2-4 Weeks' }
+];
+
+export function Calculator() {
+  // 1. Dynamic Pricing State (Would normally be fetched from API)
+  const [services] = useState(DEFAULT_EXPERTISE_SERVICES);
+
+  // 2. Client Cost Calculator State
+  const [selectedServices, setSelectedServices] = useState(['dashboard-design', 'web-mobile-dev']);
+  const [projectScope, setProjectScope] = useState('Standard');
+
+  // Toggle client service selection
+  const toggleService = (id) => {
+    setSelectedServices(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
+  // Cost calculation logic
+  const scopeMultiplier = projectScope === 'Basic' ? 0.8 : projectScope === 'Standard' ? 1.0 : 1.5;
+  const rawSubtotal = selectedServices.reduce((sum, serviceId) => {
+    const service = services.find(s => s.id === serviceId);
+    return sum + (service ? service.baseRate : 0);
+  }, 0);
+  const estimatedTotal = Math.round(rawSubtotal * scopeMultiplier);
+
+  return (
+    <div className="w-full bg-slate-50 text-slate-900 font-sans py-12 px-4 md:px-8 min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        {/* ========================================================= */}
+        {/* CLIENT SECTION: COST CALCULATOR (NO OFFER FORM)           */}
+        {/* ========================================================= */}
+        <section className="bg-white border border-slate-200 rounded-2xl p-6 md:p-10 shadow-2xl">
+          <div className="text-center mb-8">
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-800 bg-slate-100 px-3.5 py-1 rounded-full border border-slate-800/30 shadow-sm">
+              Client Price Estimator
+            </span>
+            <h2 className="text-3xl font-black text-slate-900 mt-3">Calculate Estimated Project Cost</h2>
+            <p className="text-slate-600 text-sm mt-1 max-w-xl mx-auto">
+              Select the required expertise services and complexity level to view an instant cost breakdown.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Service Selection Grid */}
+            <div className="lg:col-span-2 space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">1. Select Expertise Services</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {services.map((service) => {
+                  const isSelected = selectedServices.includes(service.id);
+                  return (
+                    <div
+                      key={service.id}
+                      onClick={() => toggleService(service.id)}
+                      className={`p-4 rounded-xl border transition-all cursor-pointer flex justify-between items-center ${
+                        isSelected
+                          ? 'bg-slate-100 border-slate-800 text-slate-900 shadow-lg shadow-slate-800/10'
+                          : 'bg-slate-100 border-slate-200 text-slate-600 hover:border-slate-300'
+                      }`}
+                    >
+                      <div>
+                        <p className="text-xs font-semibold text-slate-700 mb-0.5">{service.category}</p>
+                        <h4 className="text-sm font-bold text-slate-900">{service.title}</h4>
+                        <span className="text-[11px] text-slate-500">Rate: ${service.baseRate}</span>
+                      </div>
+                      <div className={`w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold ${
+                        isSelected ? 'bg-slate-800 text-white' : 'border border-slate-200'
+                      }`}>
+                        {isSelected ? '✓' : ''}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Scope Modifier */}
+              <div className="pt-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">2. Scope / Complexity Multiplier</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  {['Basic', 'Standard', 'Enterprise'].map((level) => (
+                    <button
+                      key={level}
+                      onClick={() => setProjectScope(level)}
+                      className={`py-2 text-xs font-bold rounded-lg border transition-all ${
+                        projectScope === level
+                          ? 'bg-slate-800 border-slate-300 text-white'
+                          : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      {level} {level === 'Basic' ? '(0.8x)' : level === 'Standard' ? '(1.0x)' : '(1.5x)'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Calculated Quote Box */}
+            <div className="bg-slate-100 border border-slate-200 p-6 rounded-xl flex flex-col justify-between">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Live Quote Calculation</h3>
+                
+                <div className="bg-white p-4 rounded-lg border border-slate-200 space-y-3 mb-6">
+                  <div className="flex justify-between text-xs text-slate-600">
+                    <span>Selected Services:</span>
+                    <span className="font-bold text-slate-900">{selectedServices.length}</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-600">
+                    <span>Complexity Level:</span>
+                    <span className="font-bold text-slate-700">{projectScope}</span>
+                  </div>
+                  <div className="border-t border-slate-200 pt-3 flex justify-between items-baseline">
+                    <span className="text-sm font-bold text-slate-700">Estimated Total:</span>
+                    <span className="text-2xl font-black text-slate-800">${estimatedTotal.toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <p className="text-xs text-slate-500 leading-relaxed mb-6">
+                  Ready to move forward? Contact us directly on WhatsApp with your selected breakdown to initiate project discussion.
+                </p>
+              </div>
+
+              <a
+                href={`https://wa.me/923365656071?text=${encodeURIComponent(`Hello! I calculated an estimated total of $${estimatedTotal} for my selected services (${selectedServices.length} items, ${projectScope} scope). I would like to discuss this proposal.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 bg-slate-800 hover:bg-white text-slate-900 text-xs font-bold rounded-lg shadow-lg shadow-slate-800/20 text-center transition-colors block"
+              >
+                💬 Send Quote via WhatsApp (+92 336 5656071)
+              </a>
+            </div>
+          </div>
+        </section>
+
+
+      </div>
+    </div>
+  );
+}

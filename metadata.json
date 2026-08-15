@@ -1,0 +1,6 @@
+{
+  "name": "GullG Technology",
+  "description": "A modern, responsive, and high-performance Web Application for GullG Technology featuring client portal, cost calculator, and admin tools.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

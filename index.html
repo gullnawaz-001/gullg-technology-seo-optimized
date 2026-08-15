@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0A1325" />
+    <meta name="description" content="GullG Technology is a digital innovation agency bridging modern web and mobile engineering, UI/UX design, AI integration, and workflow automation to build high-performance products." />
+    
+    <!-- Preconnect for Performance & LCP Optimization -->
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+    
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="https://gullgtech.online/" />
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:site_name" content="GullG Technology" />
+    <meta property="og:title" content="GullG Technology | Digital Innovation & AI Engineering Agency" />
+    <meta property="og:description" content="GullG Technology is a digital innovation agency bridging modern web and mobile engineering, UI/UX design, AI integration, and workflow automation to build high-performance products." />
+    <meta property="og:image" content="https://gullgtech.online/og-image.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gullgtech.online/" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GullG Technology | Digital Innovation & AI Engineering Agency" />
+    <meta name="twitter:description" content="GullG Technology is a digital innovation agency bridging modern web and mobile engineering, UI/UX design, AI integration, and workflow automation to build high-performance products." />
+    <meta name="twitter:image" content="https://gullgtech.online/og-image.png" />
+    
+    <title>GullG Technology | Digital Innovation & AI Engineering Agency</title>
+
+    <script>
+      window.onerror = function(msg, url, lineNo, columnNo, error) {
+        try {
+          fetch('/api/log_error', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({msg, url, lineNo, columnNo, error: error ? error.stack : ''})
+          });
+        } catch (e) {}
+        return false;
+      };
+      window.onunhandledrejection = function(event) {
+        try {
+          fetch('/api/log_error', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({msg: 'Unhandled Rejection', error: event.reason ? event.reason.stack : ''})
+          });
+        } catch (e) {}
+      };
+    </script>
+  </head>
+  <body class="bg-white text-slate-900 antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
